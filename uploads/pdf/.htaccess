@@ -1,0 +1,6 @@
+# uploads/pdf/.htaccess
+# NFR02: Blokir akses langsung ke file PDF
+# Semua akses hanya melalui viewer.php
+
+Order Allow,Deny
+Deny from all

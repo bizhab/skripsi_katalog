@@ -1,0 +1,40 @@
+# .htaccess — NFR02: Keamanan Akses File
+# Letakkan file ini di root folder proyek
+
+Options -Indexes
+
+# Blokir akses langsung ke folder uploads (NFR02 — file PDF tidak bisa diakses via URL langsung)
+# Akses PDF hanya melalui viewer.php
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Blokir akses langsung ke /uploads/
+  RewriteRule ^uploads/ - [F,L]
+
+  # Blokir akses ke file konfigurasi
+  RewriteRule ^config/ - [F,L]
+  RewriteRule ^includes/ - [F,L]
+  RewriteRule ^logs/ - [F,L]
+</IfModule>
+
+# Cegah akses ke file sensitif
+<FilesMatch "\.(sql|log|env|md|sh|bak)$">
+  Order Allow,Deny
+  Deny from all
+</FilesMatch>
+
+# Security headers
+<IfModule mod_headers.c>
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-XSS-Protection "1; mode=block"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# PHP settings
+<IfModule mod_php.c>
+  php_flag display_errors Off
+  php_value upload_max_filesize 10M
+  php_value post_max_size 12M
+  php_value max_execution_time 30
+</IfModule>
